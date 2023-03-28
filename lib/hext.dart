@@ -5,7 +5,7 @@ import 'package:yap/yap.dart';
 
 
 DateTime get now => DateTime.now();
-void importExtensions() {}
+
 
 extension Matcher on Iterable<RegExpMatch> {
   String string() {
