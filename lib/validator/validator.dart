@@ -250,7 +250,7 @@ extension Hvalidator on String {
   }
 
   /// check if the string is a credit card
-  bool isCreditCard() {
+  bool get isCreditCard {
     String sanitized = replaceAll(RegExp(r'[^0-9]+'), '');
     if (!_creditCard.hasMatch(sanitized)) {
       return false;
@@ -320,7 +320,7 @@ extension Hvalidator on String {
   }
 
   /// check if the string is valid JSON
-  bool isJson() {
+  bool get isJson {
     try {
       json.decode(this);
     } catch (e) {
@@ -330,37 +330,37 @@ extension Hvalidator on String {
   }
 
   /// check if the string contains one or more multibyte chars
-  bool isMultibyte() {
+  bool get isMultibyte {
     return _multibyte.hasMatch(this);
   }
 
   /// check if the string contains ASCII chars only
-  bool isAscii() {
+  bool get isAscii {
     return _ascii.hasMatch(this);
   }
 
   /// check if the string contains any full-width chars
-  bool isFullWidth() {
+  bool get isFullWidth {
     return _fullWidth.hasMatch(this);
   }
 
   /// check if the string contains any half-width chars
-  bool isHalfWidth() {
+  bool get isHalfWidth {
     return _halfWidth.hasMatch(this);
   }
 
   /// check if the string contains a mixture of full and half-width chars
-  bool isVariableWidth() {
-    return isFullWidth() && isHalfWidth();
+  bool get isVariableWidth {
+    return isFullWidth && isHalfWidth;
   }
 
   /// check if the string contains any surrogate pairs chars
-  bool isSurrogatePair() {
+  bool get isSurrogatePair {
     return _surrogatePairsRegExp.hasMatch(this);
   }
 
   /// check if the string is a valid hex-encoded representation of a MongoDB ObjectId
-  bool isMongoId() {
+  bool get isMongoId {
     return (isHexadecimal && length == 24);
   }
 }
