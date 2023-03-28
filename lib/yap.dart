@@ -1,14 +1,12 @@
 library yap;
 import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:map_launcher/map_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:yap/hext.dart';
 
 String tarihDonusturucu(String tarih) {
   if (tarih.isNotEmpty) {
@@ -162,7 +160,7 @@ Future<void> saatGoster(context, Function(String time) onPicked) async {
   final TimeOfDay? time =
       await showTimePicker(context: context, initialTime: TimeOfDay.now());
   if (time != null) {
-    onPicked.call(time.string());
+    onPicked.call(time.format(context));
   }
 }
 
@@ -208,7 +206,6 @@ void tarihGoster(context, Function(String) onPicked,
 }
 
 void drawerReplace(PageRouteInfo<dynamic> route, {void Function()? ifnot}) {
-  
   SchedulerBinding.instance.scheduleFrameCallback((timeStamp) {
     if (kendisayfasinda(ContextGetir(), name: route.routeName)) {
       ifnot?.call();
@@ -219,18 +216,6 @@ void drawerReplace(PageRouteInfo<dynamic> route, {void Function()? ifnot}) {
     }
   });
 }
-
-
-
-extension EvoGenelScrollControllerExt on ScrollController {
-  void enSonaGit(Duration? duration) {
-    animateTo(position.maxScrollExtent,
-        duration: duration ?? const Duration(milliseconds: 300),
-        curve: Curves.ease);
-  }
-}
-
-
 
 bool kendisayfasinda(BuildContext context, {String? name}) {
   var page = AutoRouter.of(ContextGetir()).stack.last.name;
@@ -298,44 +283,6 @@ Future<void> mailAc(String mail) async {
   }
 }
 
-
-
-RegExp turkceKarRegex = RegExp(r"[iİçÇşŞğĞÜüÖö]*");
-RegExp regex = RegExp(r'([.]*0)(?!.*\d)');
-RegExp regex2 = RegExp(r"(\.0$)");
-RegExp virgulRegex = RegExp(r",");
-RegExp noktaRegex = RegExp(r".");
-
-final List<RegExp> trregexList = [
-  RegExp(r"ı"),
-  RegExp(r"İ"),
-  RegExp(r"ç"),
-  RegExp(r"Ç"),
-  RegExp(r"Ş"),
-  RegExp(r"ş"),
-  RegExp(r"ğ"),
-  RegExp(r"Ğ"),
-  RegExp(r"ü"),
-  RegExp(r"Ü"),
-  RegExp(r"ö"),
-  RegExp(r"Ö"),
-];
-
-const List<String> trRegexIngKarsilik = [
-  "i",
-  "I",
-  "c",
-  "C",
-  "S",
-  "s",
-  "g",
-  "G",
-  "u",
-  "U",
-  "o",
-  "O",
-];
-
 Widget offlineFiltre(Widget widget, String aranan, String item) {
   var a = aranan.toLowerCase().turkceKarDegis();
   var b = item.toLowerCase().turkceKarDegis();
@@ -351,35 +298,6 @@ class NullWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return const SizedBox(width: 0, height: 0);
   }
-}
-String noktasifirkaldir(double val) {
-  var deger = val
-      .toStringAsFixed(3)
-      .replaceAll(regex, '')
-      .replaceAll(regex2, "")
-      .replaceAll(RegExp(r"(\.00$)"), "");
-  return deger;
-}
-
-String strnoktasifirkaldir(String val) {
-  var deger = double.tryParse(val);
-  deger = deger ?? 0;
-
-  return deger
-      .toStringAsFixed(3)
-      .replaceAll(regex, '')
-      .replaceAll(regex2, "")
-      .replaceAll(RegExp(r"(\.00$)"), "");
-}
-
-String virguluNoktaYap(String? val) {
-  var deger = val?.replaceAll(virgulRegex, ".").trim();
-  return deger ?? "";
-}
-
-String noktayiVirgulYap(String? val) {
-  var deger = val?.replaceAll(".", ",").trim();
-  return deger ?? "";
 }
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -412,16 +330,6 @@ Future waitWhile(bool Function() beklenen, Function() fn,
   return completer.future;
 }
 
-extension ModelParse<T> on T {
-  T mnd(T? v) => v ?? this;
-}
-
-extension Tarih on String {
-  String tar() {
-    return tarihDonusturucu(toString());
-  }
-}
-
 mixin EvoModelMixin<T> on ChangeNotifier {
   ///asırlarca düzenleyici metodlar yazmak ile uğraşmak istemiyorsan bunu kullan
   ///type.action(()async{type.a = 1;})
@@ -431,292 +339,9 @@ mixin EvoModelMixin<T> on ChangeNotifier {
   }
 }
 
-extension Matcher on Iterable<RegExpMatch> {
-  String string() {
-    return map((e) => e[0]).join();
-  }
-}
-
-extension EvoGenelExtensionBool on bool {
-  String string() {
-    return this ? "1" : "0";
-  }
-}
-
-extension DateTimeStringParse on TimeOfDay {
-  String string() {
-    var saat = hour.toString();
-    var dakika = minute.toString();
-
-    saat = saat.length == 1 ? "0" + saat : saat;
-    dakika = dakika.length == 1 ? "0" + dakika : dakika;
-
-    return "$saat:$dakika";
-  }
-}
-
-extension EvoGenelExtensionList<E> on List<E> {
-  List<E> sublistSafe(int start, int end) {
-    if (length >= end) {
-      return sublist(start, end);
-    } else {
-      return sublist(start, length);
-    }
-  }
-}
-
-extension EvoGenelExtensionString on String {
-  String get htmlRemoved {
-    {
-      var e = replaceAll(RegExp(r'<[^>]*>'), " ");
-      //e = e.Replace("<p>", " ");        // üst satırdaki regex sayesinde html tag'ları ile beraber içerisindeki style vs hepsi temizlenmekte. csv ve xlsx için çalışmakta. 22.06.2020
-      //e = e.Replace("</p>", " ");
-      //e = e.Replace("<div>", " ");
-      //e = e.Replace("</div>", " ");
-      //e = e.Replace("<br>", " ");
-      //e = e.Replace("</br>", " ");
-      //e = e.Replace("<span>", " ");
-      //e = e.Replace("</span>", " ");
-      e = e.replaceAll("&nbsp", " ");
-      e = e.replaceAll("\r\n", " ");
-      e = e.replaceAll("\r", " ");
-      e = e.replaceAll("\n", " ");
-      e = e.replaceAll(";", " ");
-      return e;
-    }
-  }
-
-  String substringSafe(int start, int end) {
-    if (length >= end) {
-      return substring(start, end);
-    } else {
-      return substring(start, length);
-    }
-  }
-
-  String saat() {
-    if (length > 6) {
-      return substring(10, 16);
-    } else {
-      return this;
-    }
-  }
-
-  bool isBlank() => trim().isEmpty;
-  double tryParseDouble() => double.tryParse(this) ?? 0;
-
-  int tryParseInt() {
-    return int.tryParse(this) ?? 0;
-  }
-
-  /// <summary> 00:00 =>>> TimeOfDay(00:00)
-  String capitalize() {
-    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
-  }
-
-  String toSnakeCase() {
-    RegExp exp = RegExp(r'(?<=[a-z])[A-Z]');
-    return replaceAllMapped(exp, (Match m) => ('_${m.group(0) ?? ""}'))
-        .toLowerCase();
-  }
-
-  String turkceKarDegis() {
-    String s = this;
-    if (contains(turkceKarRegex)) {
-      for (int i = 0; i < trregexList.length; i++) {
-        s = s.replaceAll(trregexList[i], trRegexIngKarsilik[i]);
-      }
-    }
-
-    return s;
-  }
-
-  Hour toHours() {
-    if (length == 5) {
-      List v = split(":");
-      v = v.map((e) => int.parse(e)).toList();
-      return Hour(hour: v[0], minutes: v[1]);
-    } else if (length > 5) {
-      List v = substring(11).split(":");
-      v = v.map((e) => int.parse(e)).toList();
-      return Hour(hour: v[0], minutes: v[1]);
-    } else {
-      return Hour(hour: 0, minutes: 0);
-    }
-  }
-
-  TimeOfDay toTimeOfDay() {
-    late TimeOfDay sonuc;
-    try {
-      sonuc = TimeOfDay(
-          hour: int.parse(substring(0, 2)), minute: int.parse(substring(3, 5)));
-    } catch (e) {
-      sonuc = const TimeOfDay(hour: 0, minute: 0);
-    }
-
-    return sonuc;
-  }
-
-  String reverse() {
-    return split('').reversed.join();
-  }
-
-  bool? toBool([bool? ifnull]) {
-    if (isEmpty) {
-      return ifnull;
-    } else {
-      return this == "1";
-    }
-  }
-
-  String noktaToVirgul() {
-    return virguluNoktaYap(evoDoubleParse(noktaDuzenle()).toStringAsFixed(2));
-  }
-
-  String virguTolNokta() {
-    return replaceAll(",", ".");
-  }
-
-  bool get isNumeric {
-    return double.tryParse(this) != null;
-  }
-
-  String toStringAsFixed(int uzunluk) {
-    var val = harfSayiAyir().first.split(".");
-    if (val.length == 1) {
-      return this;
-    }
-
-    if (val.last.length > uzunluk) {
-      var yuvarlamali = int.parse(val.last[uzunluk]) >= 5;
-      val.last = val.last.substring(0, uzunluk);
-      var sonchar =
-          (int.parse(val.last.substring(uzunluk - 1)) + (yuvarlamali ? 1 : 0))
-              .toString();
-      val.last = val.last.substring(0, uzunluk - 1) + sonchar;
-    }
-
-    if (val.length > 1 && val.last.length > uzunluk && val.last.isEmpty) {
-      val.removeLast();
-    } else if (val.last.length < uzunluk) {
-      var fark = (val.last.length - uzunluk).abs();
-      for (var i = 0; i < fark; i++) {
-        val.last = val.last + "0";
-      }
-    }
-
-    return val.join(".") + harfSayiAyir().last;
-  }
-
-  DateTime toDateTime() {
-    DateTime time = DateTime.now();
-    if (isNotEmpty) {
-      try {
-        time = DateTime(int.parse(substring(6, 10)), int.parse(substring(3, 5)),
-            int.parse(substring(0, 2)));
-      } catch (e) {
-        debugPrint("toDateTime() başarısız");
-      }
-    }
-
-    return time;
-  }
-
-  String noktaDuzenle() {
-    return replaceAll(regex, '')
-        .replaceAll(regex2, "")
-        .replaceAll(RegExp(r"(\.00$)"), "");
-  }
-
-  ///nokta dahildir
-  ///
-
-  ///harfleri ve sayilari 0. oge sayi 1. oge harfler olacak şekilde ayırır, double ise double olarak tutar
-  List<String> harfSayiAyir() {
-    var a = replaceAll(numregex, "").replaceAll(".", "").trim();
-    var b = numregexnoktali.allMatches(this).string();
-
-    return [b, a];
-  }
-
-  String htmlToText() {
-    return replaceAll(RegExp(r"/<[^>]*>/g"), ' ')
-        .replaceAll(RegExp(r"/\s{2,}/g"), ' ')
-        .trim();
-  }
-
-  List<String> bosluktanAyir() {
-    return split(" ");
-  }
-
-  /// DO 123456789.12345 => 123.456.789,12345                DON'T  123ABC145.55 => 123.145,55ABC
-  String displayNumFormat([String label = ""]) {
-    int chunkSize = 3;
-    var input = toStringAsFixed(2);
-
-    var negatif = input.contains("-");
-    input = input.replaceAll("-", "");
-    if (input == "0" || input.isEmpty) {
-      return "0,00";
-    }
-    var endofThis = input.harfSayiAyir().last;
-    input = input.harfSayiAyir().first;
-    if (label.isNotEmpty) {
-      debugPrint("Label: $label  value = $input");
-      debugPrint(input.harfSayiAyir().toString());
-    }
-    var splitted = input.split(".");
-    splitted.first = splitted.first.reverse();
-
-    List futureSplitted = [];
-    for (var i = 0; i < splitted.first.length; i += chunkSize) {
-      futureSplitted.add(splitted.first.substring(
-          i,
-          i + chunkSize > splitted.first.length
-              ? splitted.first.length
-              : i + chunkSize));
-    }
-
-    String futurestr = futureSplitted.join(".");
-    splitted.first = futurestr.reverse();
-    splitted = splitted.length == 2 ? splitted : [splitted.first, "00"];
-    var output = splitted.join(",");
-    return (negatif ? "-" : "") + output + endofThis;
-  }
-}
-
-var numregex = RegExp(r"[0-9]*");
-var numregexnoktali = RegExp(r"[0-9.]*");
-var harfregex = RegExp(r"^[a-zA-Z]*");
-
 /// provider.of<Tip>(ContextGetir(),listen:false)'ın kısaltmaıs
 T pof<T>({BuildContext? context, bool? listen}) {
   return Provider.of<T>(context ?? ContextGetir(), listen: listen ?? false);
-}
-
-extension TarihStringParse on DateTime {
-  String string() {
-    return "${day.toString().length == 1 ? "0$day" : day}.${month.toString().length == 1 ? "0$month" : month}.$year";
-  }
-
-  DateTime addHours(Hour time) {
-    var v = add(Duration(hours: time.hour, minutes: time.minutes));
-    return v;
-  }
-
-  DateTime removeHours([Hour? saat]) {
-    var time = saat ?? Hour(hour: hour, minutes: minute - 1);
-    var v = subtract(Duration(hours: time.hour, minutes: time.minutes));
-    return v;
-  }
-
-  ///AYIN SON GÜNÜNÜ GETİRİR
-  DateTime get lastDate => DateTime(year, month + 1, 0);
-
-  bool operator >(DateTime other) => isAfter(other);
-  bool operator <(DateTime other) => isBefore(other);
-  bool operator >=(DateTime other) => isAfter(other) || this == other;
-  bool operator <=(DateTime other) => isBefore(other) || this == other;
 }
 
 class Hour {
@@ -735,7 +360,6 @@ class Hour {
   }
 }
 
-
 List<T> evoFuzzySearch<T>(List<T> veri, List<String> arananlar, String prompt) {
   List<T> sonuc = [];
   var i = 0;
@@ -751,6 +375,7 @@ List<T> evoFuzzySearch<T>(List<T> veri, List<String> arananlar, String prompt) {
   }
   return sonuc;
 }
+
 double ratioToZeroToOne(num x, num y) {
   // Eğer y sıfıra eşitse, 1 döndürür.
   if (y == 0) {
@@ -777,42 +402,3 @@ double ratioToZeroToOne(num x, num y) {
 
   return ratio;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
