@@ -1,5 +1,7 @@
 library yap;
+
 import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -401,4 +403,11 @@ double ratioToZeroToOne(num x, num y) {
   }
 
   return ratio;
+}
+
+
+
+
+extension Hvalidator on String {
+  
 }
