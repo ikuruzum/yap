@@ -12,7 +12,7 @@ import 'package:yap/hext.dart';
 
 export "deployer.dart";
 export "hext.dart";
-export "validator/helpers.dart";
+
 export "validator/validator.dart";
 
 bool get importHext => true;
@@ -341,7 +341,7 @@ Future waitWhile(bool Function() beklenen, Function() fn,
 }
 
 ///MODELİN KENDİSİ EKLENMELİ
-mixin HMixin<MODEL extends Object> on ChangeNotifier {
+mixin HMixin<MODEL> on ChangeNotifier {
   ///asırlarca düzenleyici metodlar yazmak ile uğraşmak istemiyorsan bunu kullan
   ///type.action(()async{type.a = 1;})
   FutureOr<void> action(Function() action) async {
@@ -357,23 +357,9 @@ T pof<T>({BuildContext? context, bool? listen}) {
   return Provider.of<T>(context ?? ContextGetir(), listen: listen ?? false);
 }
 
-class Hour {
-  int hour;
-  int minutes;
-  Hour({required this.hour, required this.minutes});
-  @override
-  String toString() {
-    var hour = this.hour.toString();
-    var minutes = this.minutes.toString();
 
-    hour = hour.length == 1 ? "0" + hour : hour;
-    minutes = minutes.length == 1 ? "0" + minutes : hour;
 
-    return hour + ":" + minutes;
-  }
-}
-
-List<T> evoFuzzySearch<T>(List<T> veri, List<String> arananlar, String prompt) {
+List<T> fuzzySearch<T>(List<T> veri, List<String> arananlar, String prompt) {
   List<T> sonuc = [];
   var i = 0;
   if (prompt.length > 2) {

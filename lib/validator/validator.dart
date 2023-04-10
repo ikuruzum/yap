@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'helpers.dart';
+
 
 Map<String, Object> _defaultNormalizeEmailOptions = {'lowercase': true};
 RegExp _email = RegExp(
@@ -57,29 +57,6 @@ extension Hvalidator on String {
     return _email.hasMatch(toLowerCase());
   }
 
-  String normalizeEmail([Map<String, Object>? options]) {
-    options = merge(options, _defaultNormalizeEmailOptions);
-    if (isEmail == false) {
-      return '';
-    }
-
-    List parts = split('@');
-    parts[1] = parts[1].toLowerCase();
-
-    if (options['lowercase'] == true) {
-      parts[0] = parts[0].toLowerCase();
-    }
-
-    if (parts[1] == 'gmail.com' || parts[1] == 'googlemail.com') {
-      if (options['lowercase'] == false) {
-        parts[0] = parts[0].toLowerCase();
-      }
-      parts[0] = parts[0].replaceAll('.', '').split('+')[0];
-      parts[1] = 'gmail.com';
-    }
-    return parts.join('@');
-  }
-
   /// check if the string is a URL
   ///
   /// `options` is a `Map` which defaults to
@@ -114,7 +91,7 @@ extension Hvalidator on String {
       'allow_underscores': false
     };
 
-    options = merge(options, defaultFqdnOptions);
+    options = _merge(options, defaultFqdnOptions);
     final parts = split('.');
     if (options['require_tld'] as bool) {
       var tld = parts.removeLast();
@@ -142,7 +119,7 @@ extension Hvalidator on String {
   }
 
   /// check if the string contains only letters (a-zA-Z).
-  bool get isAlpha {
+  bool get isAlphabetic {
     return _alpha.hasMatch(this);
   }
 
@@ -212,14 +189,8 @@ extension Hvalidator on String {
   }
 
   /// check if the string is a UUID (version 3, 4 or 5).
-  bool isUUID([Object? version]) {
-    if (version == null) {
-      version = 'all';
-    } else {
-      version = version.toString();
-    }
-
-    RegExp? pat = _uuid[version];
+  bool isUUID() {
+    RegExp? pat = _uuid["all"];
     return (pat != null && pat.hasMatch(toUpperCase()));
   }
 
@@ -339,20 +310,11 @@ extension Hvalidator on String {
     return _ascii.hasMatch(this);
   }
 
-  /// check if the string contains any full-width chars
-  bool get isFullWidth {
-    return _fullWidth.hasMatch(this);
-  }
-
   /// check if the string contains any half-width chars
   bool get isHalfWidth {
     return _halfWidth.hasMatch(this);
   }
 
-  /// check if the string contains a mixture of full and half-width chars
-  bool get isVariableWidth {
-    return isFullWidth && isHalfWidth;
-  }
 
   /// check if the string contains any surrogate pairs chars
   bool get isSurrogatePair {
@@ -414,7 +376,7 @@ extension HvalidatorSN on String? {
       'allow_underscores': false,
     };
 
-    options = merge(options, defaultUrlOptions);
+    options = _merge(options, defaultUrlOptions);
 
     // String? protocol;
     // String user;
@@ -432,7 +394,7 @@ extension HvalidatorSN on String? {
     // check protocol
     var split = str.split('://');
     if (split.length > 1) {
-      final protocol = shift(split);
+      final protocol = _shift(split);
       final protocols = options['protocols'] as List<String>;
       if (!protocols.contains(protocol)) {
         return false;
@@ -444,7 +406,7 @@ extension HvalidatorSN on String? {
 
     // check hash
     split = str.split('#');
-    str = shift(split);
+    str = _shift(split);
     final hash = split.join('#');
     if (hash.isNotEmpty && RegExp(r'\s').hasMatch(hash)) {
       return false;
@@ -452,7 +414,7 @@ extension HvalidatorSN on String? {
 
     // check query params
     split = str?.split('?') ?? [];
-    str = shift(split);
+    str = _shift(split);
     final query = split.join('?');
     if (query != "" && RegExp(r'\s').hasMatch(query)) {
       return false;
@@ -460,7 +422,7 @@ extension HvalidatorSN on String? {
 
     // check path
     split = str?.split('/') ?? [];
-    str = shift(split);
+    str = _shift(split);
     final path = split.join('/');
     if (path != "" && RegExp(r'\s').hasMatch(path)) {
       return false;
@@ -469,11 +431,11 @@ extension HvalidatorSN on String? {
     // check auth type urls
     split = str?.split('@') ?? [];
     if (split.length > 1) {
-      final auth = shift(split);
+      final auth = _shift(split);
       if (auth != null && auth.contains(':')) {
         // final auth = auth.split(':');
         final parts = auth.split(':');
-        final user = shift(parts);
+        final user = _shift(parts);
         if (user == null || !RegExp(r'^\S+$').hasMatch(user)) {
           return false;
         }
@@ -487,7 +449,7 @@ extension HvalidatorSN on String? {
     // check hostname
     final hostname = split.join('@');
     split = hostname.split(':');
-    final host = shift(split);
+    final host = _shift(split);
     if (split.isNotEmpty) {
       final portStr = split.join(':');
       final port = int.tryParse(portStr, radix: 10);
@@ -529,4 +491,21 @@ extension Objext on Object{
       return false;
     }
   }
+}
+
+
+String? _shift(List<String> elements) {
+  if (elements.isEmpty) return null;
+  return elements.removeAt(0);
+}
+
+Map<String, Object> _merge(
+  Map<String, Object>? obj,
+  Map<String, Object> defaults,
+) {
+  if (obj == null) {
+    return defaults;
+  }
+  defaults.forEach((key, val) => obj.putIfAbsent(key, () => val));
+  return obj;
 }

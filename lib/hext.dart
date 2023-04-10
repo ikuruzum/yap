@@ -47,17 +47,8 @@ extension TarihStringParse on DateTime {
   String string() {
     return "${day.toString().length == 1 ? "0$day" : day}.${month.toString().length == 1 ? "0$month" : month}.$year";
   }
+  
 
-  DateTime addHours(Hour time) {
-    var v = add(Duration(hours: time.hour, minutes: time.minutes));
-    return v;
-  }
-
-  DateTime removeHours([Hour? saat]) {
-    var time = saat ?? Hour(hour: hour, minutes: minute - 1);
-    var v = subtract(Duration(hours: time.hour, minutes: time.minutes));
-    return v;
-  }
 
   ///AYIN SON GÜNÜNÜ GETİRİR
   DateTime get lastDate => DateTime(year, month + 1, 0);
@@ -112,12 +103,8 @@ extension HextS on String {
     }
   }
 
-  bool isBlank() => trim().isEmpty;
+  bool get isBlank => trim().isEmpty;
   double tryParseDouble() => double.tryParse(this) ?? 0;
-
-  int tryParseInt() {
-    return int.tryParse(this) ?? 0;
-  }
 
   /// <summary> 00:00 =>>> TimeOfDay(00:00)
   String capitalize() {
@@ -141,19 +128,7 @@ extension HextS on String {
     return s;
   }
 
-  Hour toHours() {
-    if (length == 5) {
-      List v = split(":");
-      v = v.map((e) => int.parse(e)).toList();
-      return Hour(hour: v[0], minutes: v[1]);
-    } else if (length > 5) {
-      List v = substring(11).split(":");
-      v = v.map((e) => int.parse(e)).toList();
-      return Hour(hour: v[0], minutes: v[1]);
-    } else {
-      return Hour(hour: 0, minutes: 0);
-    }
-  }
+
 
   TimeOfDay toTimeOfDay() {
     late TimeOfDay sonuc;
