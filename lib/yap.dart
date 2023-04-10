@@ -12,7 +12,6 @@ import 'package:yap/hext.dart';
 
 export "deployer.dart";
 export "hext.dart";
-
 export "validator/validator.dart";
 
 bool get importHext => true;
@@ -352,12 +351,12 @@ mixin HMixin<MODEL> on ChangeNotifier {
   MODEL create() => this as MODEL;
 }
 
+
+
 /// provider.of<Tip>(ContextGetir(),listen:false)'ın kısaltmaıs
 T pof<T>({BuildContext? context, bool? listen}) {
   return Provider.of<T>(context ?? ContextGetir(), listen: listen ?? false);
 }
-
-
 
 List<T> fuzzySearch<T>(List<T> veri, List<String> arananlar, String prompt) {
   List<T> sonuc = [];
