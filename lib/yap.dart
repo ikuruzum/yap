@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yap/hext.dart';
+export "deployer.dart";
 export "hext.dart";
 export "validator/helpers.dart";
 export "validator/validator.dart";
@@ -337,7 +338,7 @@ Future waitWhile(bool Function() beklenen, Function() fn,
   return completer.future;
 }
 
-mixin EvoModelMixin<T> on ChangeNotifier {
+mixin HMixin<T> on ChangeNotifier {
   ///asırlarca düzenleyici metodlar yazmak ile uğraşmak istemiyorsan bunu kullan
   ///type.action(()async{type.a = 1;})
   Future<void> action(Function() action) async {
@@ -410,9 +411,4 @@ double ratioToZeroToOne(num x, num y) {
   return ratio;
 }
 
-
-
-
-extension Hvalidator on String {
-
-}
+extension Hvalidator on String {}
