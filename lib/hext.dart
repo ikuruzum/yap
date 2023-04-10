@@ -14,7 +14,6 @@ extension Matcher on Iterable<RegExpMatch> {
 }
 
 
-
 String noktasifirkaldir(double val) {
   var deger = val
       .toStringAsFixed(3)
@@ -27,7 +26,6 @@ String noktasifirkaldir(double val) {
 String strnoktasifirkaldir(String val) {
   var deger = double.tryParse(val);
   deger = deger ?? 0;
-
   return deger
       .toStringAsFixed(3)
       .replaceAll(regex, '')
@@ -75,17 +73,20 @@ extension ModelParse<T> on T {
 }
 
 extension HextS on String {
+  double get float => double.tryParse(this) ?? 0;
+  int get integer => int.tryParse(this) ?? 0;
+
   String get htmlRemoved {
     {
       var e = replaceAll(RegExp(r'<[^>]*>'), " ");
-      //e = e.Replace("<p>", " ");        // üst satırdaki regex sayesinde html tag'ları ile beraber içerisindeki style vs hepsi temizlenmekte. csv ve xlsx için çalışmakta. 22.06.2020
-      //e = e.Replace("</p>", " ");
-      //e = e.Replace("<div>", " ");
-      //e = e.Replace("</div>", " ");
-      //e = e.Replace("<br>", " ");
-      //e = e.Replace("</br>", " ");
-      //e = e.Replace("<span>", " ");
-      //e = e.Replace("</span>", " ");
+      e = e.replaceAll("<p>", " ");
+      e = e.replaceAll("</p>", " ");
+      e = e.replaceAll("<div>", " ");
+      e = e.replaceAll("</div>", " ");
+      e = e.replaceAll("<br>", " ");
+      e = e.replaceAll("</br>", " ");
+      e = e.replaceAll("<span>", " ");
+      e = e.replaceAll("</span>", " ");
       e = e.replaceAll("&nbsp", " ");
       e = e.replaceAll("\r\n", " ");
       e = e.replaceAll("\r", " ");
@@ -314,7 +315,6 @@ extension HextN on num {
     }
   }
 }
-
 extension HextBC on BuildContext {
   T prov<T>([bool listen = false]) {
     return Provider.of<T>(this, listen: listen);
@@ -333,8 +333,6 @@ extension HextTOD on TimeOfDay {
   String get string =>
       "${hour.toString().length == 1 ? "0$hour" : hour.toString()}:${minute.toString().length == 1 ? "0$minute" : minute.toString()}";
   DateTime get date => DateTime(now.year, now.month, now.day, hour, minute);
-
-
 }
 
 
@@ -356,15 +354,3 @@ extension HextL<E> on List<E>{
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
