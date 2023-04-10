@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yap/hext.dart';
+
 export "deployer.dart";
 export "hext.dart";
 export "validator/helpers.dart";
@@ -325,6 +326,7 @@ Future waitWhile(bool Function() beklenen, Function() fn,
     Duration timeout = const Duration(seconds: 1),
     Duration pollInterval = const Duration(milliseconds: 200)]) {
   var completer = Completer();
+
   check() {
     if (beklenen()) {
       completer.complete();
@@ -338,13 +340,16 @@ Future waitWhile(bool Function() beklenen, Function() fn,
   return completer.future;
 }
 
-mixin HMixin<T> on ChangeNotifier {
+///MODELİN KENDİSİ EKLENMELİ
+mixin HMixin<MODEL extends Object> on ChangeNotifier {
   ///asırlarca düzenleyici metodlar yazmak ile uğraşmak istemiyorsan bunu kullan
   ///type.action(()async{type.a = 1;})
-  Future<void> action(Function() action) async {
+  FutureOr<void> action(Function() action) async {
     await action.call();
     notifyListeners();
   }
+
+  MODEL create() => this as MODEL;
 }
 
 /// provider.of<Tip>(ContextGetir(),listen:false)'ın kısaltmaıs
