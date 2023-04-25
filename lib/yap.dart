@@ -10,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yap/hext.dart';
 
+export 'package:yap/try_catch.dart';
+
 export "deployer.dart";
 export "hext.dart";
 export "validator/validator.dart";
@@ -350,8 +352,6 @@ mixin HMixin<MODEL> on ChangeNotifier {
 
   MODEL create() => this as MODEL;
 }
-
-
 
 /// provider.of<Tip>(ContextGetir(),listen:false)'ın kısaltmaıs
 T pof<T>({BuildContext? context, bool? listen}) {
