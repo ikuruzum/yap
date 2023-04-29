@@ -401,4 +401,3 @@ double ratioToZeroToOne(num x, num y) {
   return ratio;
 }
 
-extension Hvalidator on String {}

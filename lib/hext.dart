@@ -3,16 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:yap/regex.dart';
 import 'package:yap/yap.dart';
 
-
 DateTime get now => DateTime.now();
-
 
 extension Matcher on Iterable<RegExpMatch> {
   String string() {
     return map((e) => e[0]).join();
   }
 }
-
 
 String noktasifirkaldir(double val) {
   var deger = val
@@ -41,22 +38,6 @@ String virguluNoktaYap(String? val) {
 String noktayiVirgulYap(String? val) {
   var deger = val?.replaceAll(".", ",").trim();
   return deger ?? "";
-}
-
-extension TarihStringParse on DateTime {
-  String string() {
-    return "${day.toString().length == 1 ? "0$day" : day}.${month.toString().length == 1 ? "0$month" : month}.$year";
-  }
-  
-
-
-  ///AYIN SON GÜNÜNÜ GETİRİR
-  DateTime get lastDate => DateTime(year, month + 1, 0);
-
-  bool operator >(DateTime other) => isAfter(other);
-  bool operator <(DateTime other) => isBefore(other);
-  bool operator >=(DateTime other) => isAfter(other) || this == other;
-  bool operator <=(DateTime other) => isBefore(other) || this == other;
 }
 
 extension ModelParse<T> on T {
@@ -127,8 +108,6 @@ extension HextS on String {
 
     return s;
   }
-
-
 
   TimeOfDay toTimeOfDay() {
     late TimeOfDay sonuc;
@@ -290,6 +269,7 @@ extension HextN on num {
     }
   }
 }
+
 extension HextBC on BuildContext {
   T prov<T>([bool listen = false]) {
     return Provider.of<T>(this, listen: listen);
@@ -301,7 +281,17 @@ extension HextBC on BuildContext {
 }
 
 extension HextDT on DateTime {
-  String get string => "$day.$month.$year";
+  String get string {
+    return "${day.toString().length == 1 ? "0$day" : day}.${month.toString().length == 1 ? "0$month" : month}.$year";
+  }
+
+  ///AYIN SON GÜNÜNÜ GETİRİR
+  DateTime get lastDate => DateTime(year, month + 1, 0);
+
+  bool operator >(DateTime other) => isAfter(other);
+  bool operator <(DateTime other) => isBefore(other);
+  bool operator >=(DateTime other) => isAfter(other) || this == other;
+  bool operator <=(DateTime other) => isBefore(other) || this == other;
 }
 
 extension HextTOD on TimeOfDay {
@@ -310,18 +300,18 @@ extension HextTOD on TimeOfDay {
   DateTime get date => DateTime(now.year, now.month, now.day, hour, minute);
 }
 
-
 extension HextB on bool {
-    int integer() {
+  int integer() {
     return this ? 1 : 0;
   }
-    String string() {
+
+  String string() {
     return this ? "1" : "0";
   }
 }
 
-extension HextL<E> on List<E>{
-    List<E> sublistSafe(int start, int end) {
+extension HextL<E> on List<E> {
+  List<E> sublistSafe(int start, int end) {
     if (length >= end) {
       return sublist(start, end);
     } else {
