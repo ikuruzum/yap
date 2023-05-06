@@ -259,6 +259,10 @@ extension HextSN on String? {
   }
 }
 
+extension HAll<T> on T {
+  T create() => this;
+}
+
 extension HextN on num {
   String toHString() {
     var v = toString();
