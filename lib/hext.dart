@@ -285,6 +285,8 @@ extension HextBC on BuildContext {
 }
 
 extension HextDT on DateTime {
+  TimeOfDay toTimeOfDay() => TimeOfDay(hour: hour, minute: minute);
+
   String get string {
     return "${day.toString().length == 1 ? "0$day" : day}.${month.toString().length == 1 ? "0$month" : month}.$year";
   }
@@ -299,8 +301,6 @@ extension HextDT on DateTime {
 }
 
 extension HextTOD on TimeOfDay {
-  TimeOfDay toTimeOfDay() => TimeOfDay(hour: hour, minute: minute);
-
   String get string =>
       "${hour.toString().length == 1 ? "0$hour" : hour.toString()}:${minute.toString().length == 1 ? "0$minute" : minute.toString()}";
   DateTime get date => DateTime(now.year, now.month, now.day, hour, minute);
