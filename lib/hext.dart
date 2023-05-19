@@ -112,8 +112,10 @@ extension HextS on String {
   TimeOfDay toTimeOfDay() {
     late TimeOfDay sonuc;
     try {
+      var v = this.split(":");
+
       sonuc = TimeOfDay(
-          hour: int.parse(substring(0, 2)), minute: int.parse(substring(3, 5)));
+          hour: int.parse(v.first), minute: int.parse(v.last));
     } catch (e) {
       sonuc = const TimeOfDay(hour: 0, minute: 0);
     }
